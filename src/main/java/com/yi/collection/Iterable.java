@@ -11,10 +11,12 @@ public interface Iterable<T> {
 
 	default void forEach(Consumer<? super T> action) {
 		Objects.requireNonNull(action);
-		// todo: 此处报错，参考源码
-		/*for (T t : this) {
+		Iterator<T> var = this.iterator();
+
+		while (var.hasNext()) {
+			T t = var.next();
 			action.accept(t);
-		}*/
+		}
 	}
 
 }
