@@ -6,7 +6,7 @@ public interface Collection<E> extends Iterable<E>{
 	 * 向集合中添加元素
 	 * @return      添加个数
 	 */
-	int add();
+	boolean add(E e);
 
 	/**
 	 * 查看集合的大小
