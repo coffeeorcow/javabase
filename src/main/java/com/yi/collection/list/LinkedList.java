@@ -3,9 +3,10 @@ package com.yi.collection.list;
 import com.yi.collection.Iterator;
 
 public class LinkedList<E> implements List<E> {
+
 	@Override
-	public int add() {
-		return 0;
+	public boolean add(E e) {
+		return false;
 	}
 
 	@Override

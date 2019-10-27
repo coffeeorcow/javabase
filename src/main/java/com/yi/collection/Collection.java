@@ -37,4 +37,5 @@ public interface Collection<E> extends Iterable<E>{
 	 * @return 数组对象
 	 */
 	Object[] toArray();
+
 }

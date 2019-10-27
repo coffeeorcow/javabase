@@ -5,11 +5,10 @@ import com.yi.collection.Iterator;
 public class ArrayList<E> implements List<E> {
 
 	private static final int DEFAULT_CAPACITY = 10;
-
 	private static final Object[] EMPTY_ELEMENT_DATA = {};
+	private static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
 
 	private Object[] items;
-
 	private int size;
 
 	public ArrayList() {
@@ -33,8 +32,32 @@ public class ArrayList<E> implements List<E> {
 		return true;
 	}
 
-	private void ensureCapacityInternal(int i) {
-		// todo: 确定列表大小
+	private void ensureCapacityInternal(int minCapacity) {
+		if (minCapacity - items.length > 0) {
+			grow(minCapacity);
+		}
+	}
+
+	private void grow(int minCapacity) {
+		int oldSize = items.length;
+		int newCapacity = oldSize + (oldSize >> 1);
+		if (newCapacity - minCapacity < 0) {
+			newCapacity = minCapacity;
+		}
+		if (newCapacity - MAX_ARRAY_SIZE > 0) {
+			newCapacity = hugeCapacity(minCapacity);
+		}
+
+		items = Arrays.copyOf(items, newCapacity);
+	}
+
+	private int hugeCapacity(int minCapacity) {
+		if (minCapacity < 0) {
+			throw new OutOfMemoryError("array size is too big");
+		}
+		return minCapacity - MAX_ARRAY_SIZE < 0 ?
+				MAX_ARRAY_SIZE :
+				Integer.MAX_VALUE;
 	}
 
 	@Override
@@ -71,5 +94,6 @@ public class ArrayList<E> implements List<E> {
 		List<Integer> list = new ArrayList<>();
 		list.add(1);
 		list.add(2);
+		System.out.println(list.toString());
 	}
 }
