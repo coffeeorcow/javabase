@@ -10,10 +10,12 @@ public class NonentrantLock implements Lock, Serializable {
 
 	private static class Sync extends AbstractQueuedSynchronizer {
 
+		@Override
 		protected boolean isHeldExclusively() {
 			return getState() == 1;
 		}
 
+		@Override
 		protected boolean tryAcquire(int accquires) {
 			assert accquires == 1;
 			if (compareAndSetState(0, 1)) {
@@ -23,6 +25,7 @@ public class NonentrantLock implements Lock, Serializable {
 			return false;
 		}
 
+		@Override
 		protected boolean tryRelease(int releases) {
 			assert releases == 1;
 			if (getState() == 0) {
@@ -47,7 +50,7 @@ public class NonentrantLock implements Lock, Serializable {
 
 	@Override
 	public void lockInterruptibly() throws InterruptedException {
-
+		sync.acquireInterruptibly(1);
 	}
 
 	@Override

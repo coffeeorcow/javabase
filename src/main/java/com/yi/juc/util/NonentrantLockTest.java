@@ -24,6 +24,7 @@ public class NonentrantLockTest {
 			super(threadName);
 			this.threadName = threadName;
 		}
+
 		@Override
 		public void run() {
 			lock.lock();
@@ -82,7 +83,7 @@ public class NonentrantLockTest {
 			new Producer("producer" + (i+1)).start();
 		}
 		for (int i = 0; i < 5; i++) {
-			new Consumer("consumer" + (i + 1)).start();
+			new Consumer("consumer" + (i+1)).start();
 		}
 
 	}
