@@ -2,6 +2,7 @@ package com.yi.juc.util;
 
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Condition;
 
 public class NonentrantLockTest {
@@ -12,9 +13,10 @@ public class NonentrantLockTest {
 
 	final static Queue<String> queue = new LinkedBlockingQueue<>();
 	final static int queueSize = 10;
+	final static int totalNum = 1000;
 
-	static long consumeCount = 0;
-	static long produceCount = 0;
+	static AtomicLong consumeCount = new AtomicLong(0);
+	static AtomicLong produceCount = new AtomicLong(0);
 
 	static class Producer extends Thread {
 		final String threadName;
@@ -26,21 +28,23 @@ public class NonentrantLockTest {
 
 		@Override
 		public void run() {
-			lock.lock();
-			try {
-				while (queue.size() == queueSize) {
-					notEmpty.await();
+			while (produceCount.get() < totalNum) {
+				lock.lock();
+				try {
+					while (queue.size() == queueSize) {
+						notEmpty.await();
+					}
+
+					queue.add("ele");
+					System.out.println(threadName + " produce: " + produceCount.incrementAndGet());
+
+					notFull.signalAll();
+
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				} finally {
+					lock.unlock();
 				}
-
-				queue.add("ele");
-				System.out.println(threadName + " produce: " + produceCount++);
-
-				notFull.signalAll();
-
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			} finally {
-				lock.unlock();
 			}
 		}
 	}
@@ -55,21 +59,24 @@ public class NonentrantLockTest {
 
 		@Override
 		public void run() {
-			lock.lock();
-			try {
-				while (queue.size() == 0) {
-					notFull.await();
+			while (consumeCount.get() < totalNum) {
+				lock.lock();
+				try {
+
+					while (queue.size() == 0) {
+						notFull.await();
+					}
+
+					queue.poll();
+					System.out.println(threadName + " consume: " + consumeCount.incrementAndGet());
+
+					notEmpty.signalAll();
+
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				} finally {
+					lock.unlock();
 				}
-
-				queue.poll();
-				System.out.println(threadName + " consume: " + consumeCount++);
-
-				notEmpty.signalAll();
-
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			} finally {
-				lock.unlock();
 			}
 		}
 	}
@@ -77,10 +84,10 @@ public class NonentrantLockTest {
 	public static void main(String[] args) {
 		// 2个生产者，5个消费者
 		for (int i = 0; i < 2; i++) {
-			new Producer("producer" + (i+1)).start();
+			new Producer("producer" + (i + 1)).start();
 		}
 		for (int i = 0; i < 5; i++) {
-			new Consumer("consumer" + (i+1)).start();
+			new Consumer("consumer" + (i + 1)).start();
 		}
 
 	}
