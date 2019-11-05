@@ -2,7 +2,6 @@ package com.yi.juc.util;
 
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.atomic.LongAdder;
 import java.util.concurrent.locks.Condition;
 
 public class NonentrantLockTest {
@@ -14,8 +13,8 @@ public class NonentrantLockTest {
 	final static Queue<String> queue = new LinkedBlockingQueue<>();
 	final static int queueSize = 10;
 
-	final static LongAdder consumeCount = new LongAdder();
-	final static LongAdder produceCount = new LongAdder();
+	static long consumeCount = 0;
+	static long produceCount = 0;
 
 	static class Producer extends Thread {
 		final String threadName;
@@ -34,8 +33,7 @@ public class NonentrantLockTest {
 				}
 
 				queue.add("ele");
-				produceCount.increment();
-				System.out.println(threadName + " produce: " + produceCount.intValue());
+				System.out.println(threadName + " produce: " + produceCount++);
 
 				notFull.signalAll();
 
@@ -64,8 +62,7 @@ public class NonentrantLockTest {
 				}
 
 				queue.poll();
-				consumeCount.increment();
-				System.out.println(threadName + " consume: " + consumeCount.intValue());
+				System.out.println(threadName + " consume: " + consumeCount++);
 
 				notEmpty.signalAll();
 
