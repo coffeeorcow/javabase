@@ -31,7 +31,8 @@ public class NonentrantLockTest {
 			while (produceCount.get() < totalNum) {
 				lock.lock();
 				try {
-					while (queue.size() == queueSize) {
+					// 可能会出现虚假唤醒
+					if (queue.size() == queueSize) {
 						notEmpty.await();
 					}
 
@@ -39,6 +40,7 @@ public class NonentrantLockTest {
 					System.out.println(threadName + " produce: " + produceCount.incrementAndGet());
 
 					notFull.signalAll();
+
 
 				} catch (InterruptedException e) {
 					e.printStackTrace();
@@ -62,8 +64,8 @@ public class NonentrantLockTest {
 			while (consumeCount.get() < totalNum) {
 				lock.lock();
 				try {
-
-					while (queue.size() == 0) {
+					// 可能会出现虚假唤醒
+					if (queue.size() == 0) {
 						notFull.await();
 					}
 
@@ -84,10 +86,10 @@ public class NonentrantLockTest {
 	public static void main(String[] args) {
 		// 2个生产者，5个消费者
 		for (int i = 0; i < 2; i++) {
-			new Producer("producer" + (i + 1)).start();
+			new Producer("producer" + i).start();
 		}
 		for (int i = 0; i < 5; i++) {
-			new Consumer("consumer" + (i + 1)).start();
+			new Consumer("consumer" + i).start();
 		}
 
 	}
