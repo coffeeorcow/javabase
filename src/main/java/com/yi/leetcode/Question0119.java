@@ -18,7 +18,7 @@ public class Question0119 {
 
     public static List<Integer> getRows2(int rowNumber) {
         if (rowNumber < 0) {
-            return new ArrayList<Integer>();
+            return new ArrayList<>();
         }
         Integer[] list = new Integer[rowNumber + 1];
         Arrays.fill(list, 1);
