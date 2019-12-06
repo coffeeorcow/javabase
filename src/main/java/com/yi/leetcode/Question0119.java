@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * 求 杨辉三角 第 n 行数组
+ */
 public class Question0119 {
 
     public static List<Integer> getRows(int rowIndex) {

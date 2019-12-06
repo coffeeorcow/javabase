@@ -1,5 +1,8 @@
 package com.yi.leetcode;
 
+/**
+ * 求 x^n
+ */
 public class Question0050 {
 
     public static double fastPow(double x, long n) {
